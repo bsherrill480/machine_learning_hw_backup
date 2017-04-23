@@ -1,0 +1,305 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{fullpage}
+\usepackage{graphicx,amssymb,hyperref}
+\usepackage{wasysym,multirow,stmaryrd}
+\usepackage{algorithm,algorithmic,color}
+
+\newcommand{\assignment}[4]{
+\thispagestyle{plain} 
+\newpage
+\setcounter{page}{1}
+\noindent
+\begin{center}
+\framebox{ \vbox{ \hbox to 6.28in
+{\bf CS6140: Machine Learning \hfill Spring 2017}
+\vspace{4mm}
+\hbox to 6.28in
+{\hspace{2.5in}\large\mbox{Problem Set #1}}
+\vspace{4mm}
+\hbox to 6.28in
+{{\hfill {\em Official Due Date: #3}}}
+\hbox to 6.28in
+{{\it Handed Out: #2 \hfill Extended Due Date: #4}}
+}}
+\end{center}
+}
+
+\newcommand{\solution}[3]{
+\thispagestyle{plain} 
+\newpage
+\setcounter{page}{1}
+\noindent
+\begin{center}
+\framebox{ \vbox{ \hbox to 6.28in
+{\bf CS6140: Machine Learning \hfill Spring 2017}
+\vspace{4mm}
+\hbox to 6.28in
+{\hspace{2.5in}\large\mbox{Problem Set #1 Solutions}}
+\vspace{4mm}
+\hbox to 6.28in
+{{\bf #2 \hfill Submitted: #3}}
+}}
+\end{center}
+}
+
+\newcommand{\red}[1]{
+\textcolor{red}{#1}
+}
+
+\begin{document}
+
+\assignment{2}{February 18, 2017}{March 1, 2017}{March 17, 2017}
+
+\begin{footnotesize}
+\begin{itemize}
+
+\item
+Please submit your solutions via your CCIS {\tt github} account.   
+
+\item
+Materials associated with this problem set are available at\\ \url{https://github.ccs.neu.edu/cs6140-03-spring2017/materials}.
+
+\item
+I encourage you to discuss the homework with other members of the class. The goal of the homework is for you to learn the course material. However, you should write your own solution.
+
+\item
+Please keep your solution brief, clear, and legible.  If you are feeling generous, I would {\em really} appreciate typed solutions (and if you plan on publishing CS/Math/Engineering research, this is actually a good exercise) -- see the source material if you would like to use \LaTeX{} to do this.
+
+\item
+I encourage you to ask questions before class, after class, via email, or the Piazza QA section. However, please do not start e-mailing me questions the night before the homework is due. $\smiley$
+
+\end{itemize}
+\end{footnotesize}
+
+\begin{enumerate}
+
+\item
+{\bf [Na\"{i}ve Bayes I -- 20 points]} A function we have discussed (briefly) in class is the $m$-of-$n$ function, where $\mathbf{x} \in \{0,1\}^n$ is an $n$-dimensional Boolean vector and $f(\mathbf{x}) = 1$ if and only if at least $m$ values of $\mathbf{x} = 1$.
+
+\begin{enumerate}
+\item
+Write down a linear threshold function of the form $f(\mathbf{x}) = sgn(\mathbf{w} \cdot \mathbf{x} - \theta)$.  Specifically, what are the values of $\mathbf{w}$ and $\theta$.
+\item
+Now assume that your training data is the complete enumeration of the 8-dimensional Boolean hypercube ({\em i.e.,} there are $2^8$ examples) and the data is labeled by a 3-of-8 function.
+
+Knowing from class that the 2-class Na\"{i}ve Bayes hypothesis is given by 
+
+$$\log \frac{p(y = 1)}{p(y = 0)} + \sum_{i=1}^n \log \frac{1 - \mu_i}{1 - \chi_i} + \sum_{i=1}^n \left[ \log \frac{\mu_i}{1 - \mu_i} - \log \frac{\chi_i}{1 - \chi_i} \right] x_i > 0$$
+
+where $\mu_i = p(x_i = 1 | y = 1)$ and $\chi_i = p(x_i = 1 | y = 0)$, write down the resulting learned Na\"{i}ve Bayes hypothesis.  [Hint: This is basically a counting problem; for example, $p(y=0)$ is the number of binary vectors of length 8 with \{0,1,2\} positive bits divided by the total space of 8 dimensional Boolean vectors.]
+
+\item
+Does the Na\"{i}ve Bayes learning algorithm learn the target function?  Interpret this result in terms of the Na\"{i}ve Bayes hypothesis space as compared to the hypothesis space of a general linear function ({\em i.e.,} $\mathbf{w} \in \mathbb{R}^d, \theta \in \mathbb{R}$).
+\end{enumerate}
+
+\clearpage
+\item
+{\bf [Na\"{i}ve Bayes II -- 40 points]}
+
+For this problem, you will be implementing the multinomial version of the Na\"{i}ve Bayes algorithm for text classification.\footnote{If you are looking for a reference beyond what was presented in class, \url{http://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html} is a pretty good description.}  Specifically, we will be considering the email folder classification problem based on the Enron email dataset available in its entirety at \url{http://www.cs.cmu.edu/~enron/}.  Even more specifically, I have selected a subset of the data processed by Ron Bekkerman for this specific task.  If you are interested in exploring this dataset further, information information including a technical report is available at \url{http://management.haifa.ac.il/images/info_people/ron_bekkerman_files/email.pdf}.  However, we will only be considering the email of Michelle Lokay\footnote{Yes, I am sort of uncomfortable with these emails being made public for the more innocent parties -- however, I have never actually read them and I doubt you will either.} and attempting to automatically classify her emails into one of eight folders.
+
+In the course github repository, you should first observe the {\tt lokay-m.zip} file which contains the original emails as processed by Ron Bekkerman.  In the {\tt processed} folder, I have further processed the data, all of which was done with {\tt mnb/ProcessEmail.java} (also in the github repository).  Based on this process, you will find eight training files (one from each directory) following the naming convention {\tt [directory].train.txt}.  The format of each of these files (the example below is from {\tt corporate.train.txt}) is
+
+\begin{verbatim}
+brave 2
+logos 3
+child/children=20 3
+time. 5
+time: 10
+logon 6
+\end{verbatim}
+%# 6
+%! 6
+%& 164
+
+where the first column is the word and the second column is the number of times the word occurs with respect to the given class label.  Furthermore, {\tt vocabulary.txt} contains the counts for the entire vocabulary, {\tt train-files.txt} is a list of all the training email files, and {\tt test-files.txt} is a list of all the testing email files.  The basic preprocessing algorithm was to compile the entire {\tt Lokay} corpus, remove end of sentence periods and oxford-style commas, lowercase the corpus, and split on spaces (see {\tt process\_line} if you want to change this for some reason).  Furthermore, I removed all tokens which did not occur at least three times and the 100 most frequent tokens (in a modest effort to remove determiners and the such).  Note that you have to essentially compute $p(y = y'), \  \forall y'$ and $p(x_i = w | y = y'), \  \forall w_i, y'$, which can be done entirely from the {\tt [directory].train.txt} files and {\tt train-files.txt}.\footnote{I used {\tt vocabulary.txt} to generate a global word map, but there are other ways to do this.}
+
+Secondly, you have been provided with a {\tt test.txt} file which contains the testing data such that the first column is the email folder label (and should not be a feature).  Training data consists of all emails before 2002 and testing data consists of all emails from 2002.  The distribution of emails per folder is given below.
+
+\begin{verbatim}
+articles training:237 testing:6
+corporate training:362 testing:45
+enron_t_s training:173 testing:6
+enron_travel_club training:19 testing:2
+hea_nesa training:79 testing:12
+personal training:159 testing:31
+systems training:109 testing:17
+tw_commercial_group training:1008 testing:151
+\end{verbatim}
+
+As previously stated, for this problem, you will be generating a Na\"{i}ve Bayes classifier.  The specific form of Na\"{i}ve Bayes for text classification I would like you to consider is given by Algorithm~\ref{alg:nb}.
+
+\begin{algorithm}
+\begin{algorithmic}
+   \STATE {\bfseries Input:} Labeled training corpus $\mathcal{S}$ which is label-stratified as denoted by $\mathcal{S}_y$ where $y \in \mathcal{Y}$ is the set of output labels.
+   \vspace{0.5em}
+   \hrule
+   \vspace{0.5em}
+   \STATE $\mathcal{V} \leftarrow$ set of all tokens occurring in $\mathcal{S}$ 
+   \COMMENT {Use {\tt train-files.txt}}
+   \FOR {$y \in \mathcal{Y}$}
+      \STATE $p(y) \leftarrow \frac{|\mathcal{S}_y|}{|\mathcal{S}|}$
+      \STATE $\mathcal{C}_y \leftarrow$ corpus generated by concatenating $\mathcal{S}_y$
+      \COMMENT {These are {\tt [directory].train.txt}}
+      \FOR {$w \in \mathcal{V}$}
+         \STATE $n_w \leftarrow$ number of times $w$ occurs in $\mathcal{C}_y$
+         \STATE $p(x_i = w  | y) \leftarrow \frac{n_w + 1}{|\mathcal{C}_y| + |\mathcal{V}|}$
+      \ENDFOR
+   \ENDFOR
+   \vspace{0.5em}
+   \hrule
+   \vspace{0.5em}
+   \STATE {\bfseries Output:} Learned parameters $p(y)$ and $p(x|y)$ for all $y \in \mathcal{Y}, w \in \mathcal{V}$ 
+\caption{(Multinomial) Na\"{i}ve Bayes Learning}
+\label{alg:nb}
+\end{algorithmic}
+\end{algorithm}
+
+Once you have learned the parameters, the decision rule is given by
+
+$$\hat{y} \leftarrow \arg\max_{y \in \mathcal{Y}} p(y) \prod_{i=1}^{d} p(x_i = w | y)$$
+
+where $d$ is the dimensionality of the test document.  Note that this product will end up being a very small number and therefore you will want to change this to a sum of logs to prevent underflow. 
+
+\begin{enumerate}
+\item
+Create a program that can be run with the command
+
+{\tt ./nb-run}
+
+which should produce a predictions file {\tt predictions.nb} such that the labels should be mapped as stated int Table~\ref{table:mapping}.
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{|l|c|}
+\hline
+Text Label & Numerical Value \\
+\hline
+articles & 1.0 \\
+corporate & 2.0 \\
+enron\_t\_s & 3.0 \\
+enron\_travel\_club & 4.0 \\ 
+hea\_nesa & 5.0 \\
+personal & 6.0 \\
+systems & 7.0 \\
+tw\_commercial\_group & 8.0 \\
+\hline
+\end{tabular}
+\caption{Label to Numerical Value Mapping}
+\label{table:mapping}
+\end{table}
+
+While this labeling might seem a bit strange, it will allow us to maintain consistency {\em if} I decide to use this data in future problem sets.  Look at {\tt output/labels.txt} to see the ``gold" labels in the decided format.  Additionally, in the {\tt output} directory, you can run {\tt evaluate.pl labels.txt predictions.nb} can be used to generate a confusion matrix (and {\tt predictions.nb} is the file generated above).\footnote{You are welcome to generate your own method for deriving a confusion matrix.}
+
+\item
+Describe anything you did differently in regards to processing the files or anything else we may find interesting.  Note that you are allowed to use the files {\em as-is} and receive full credit.  However, I am always impressed by interesting results.
+
+\item
+Write down the confusion matrix for the Na\"{i}ve Bayes output.
+
+\item
+Interpret these results.
+
+\end{enumerate}
+
+\item
+{\bf [Logistic Regression -- 40 points]}
+
+For this problem, you will be implementing stochastic gradient descent for text classification with logistic regression.  Specifically, we will again be considering the email folder classification problem based on the Enron email dataset.  However, to simplify the problem, we will be attempting to automatically classify her emails into one of two folders, {\tt personal} or {\tt corporate}.
+
+For this problem, in the {\tt libsvm} folder, I have processed the data into {\tt libsvm format,}\footnote{I have adopted this standard as it is reasonably widely used -- see \url{https://www.csie.ntu.edu.tw/~cjlin/libsvm/} for more information} all of which was done with {\tt logistic/ProcessEmail.java} (also in the github repository) to generate sparse feature vectors.  Basically, each feature has an id followed by a superfluous {\tt 1.0} to indicate a {\em strength} of 1.  If you would like to see what the ids correspond to, look at {\tt features.lexicon}.\footnote{If you do look at this, it is easy to see that there is room for better preprocessing.}
+
+Based on this process, you will find one training file and one test file.
+As previously, the basic preprocessing algorithm was to compile the entire {\tt Lokay} corpus, remove end of sentence periods and oxford-style commas, lowercase the corpus, and split on spaces (see {\tt process\_line} if you want to change this for some reason).  Furthermore, I removed all tokens which did not occur at least three times and the 100 most frequent tokens (in a modest effort to remove determiners and the such).  Training data again consists of all emails before 2002 and testing data consists of all emails in 2002.  The distribution of emails per folder is given below.
+
+\begin{verbatim}
+corporate training:362 testing:45
+personal training:159 testing:31
+\end{verbatim}
+
+As previously stated, for this problem, you will be generating a Logistic Regression classifier with parameters estimated via Stochastic Gradient Descent (SGD) as given by Algorithm~\ref{alg:lr}.
+
+\begin{algorithm}[htb]
+\begin{algorithmic}
+   \STATE {\bfseries Input:} Labeled training corpus $\mathcal{S} \subset \mathcal{X} \times \mathcal{Y}$ (where $\mathcal{X} \subset \mathbb{R}^D$ is the feature space and  $\mathcal{Y} \in \{0,1\}$ is the label space); learning rate $\alpha$; number of rounds $T$
+   \vspace{0.5em}
+   \hrule
+   \vspace{0.5em}
+   \STATE $\mathbf{w} \leftarrow \mathbf{0}, w_0 \leftarrow 0$
+   \COMMENT{$w_0$ is a standard convention for learning a {\em bias}}
+   \STATE \COMMENT{Should pick your own halting criteria, but hard-coding rounds will work}
+   \FOR {$t = 1, \ldots, T$}
+      \STATE $\textsc{Shuffle}(\mathcal{S})$
+      \FOR {$(\mathbf{x},y) \in \mathcal{S}$}
+         \STATE $\sigma(\mathbf{x}) = \frac{1}{1 + \exp(-\mathbf{w}^T\mathbf{x} - w_0)}$
+         \COMMENT{Sigmoid function}
+         \STATE $\delta \leftarrow y - \sigma(\mathbf{x})$
+         \STATE \COMMENT{$D$ is dimensionality}
+         \FOR {$d \leftarrow 1, \ldots, D$}
+            \STATE $w_d \leftarrow w_d + \delta x_d$
+         \ENDFOR
+         \STATE $w_0 \leftarrow w_0 + \delta$ 
+      \ENDFOR
+   \ENDFOR
+   \vspace{0.5em}
+   \hrule
+   \vspace{0.5em}
+   \STATE {\bfseries Output:} Learned parameters $\mathbf{w}$ and $w_0$ 
+\caption{(Binary) Logistic Regression with Stochastic Gradient Descent}
+\label{alg:lr}
+\end{algorithmic}
+\end{algorithm}
+
+Once you have learned the parameters, the decision rule is given by
+
+$$\hat{y} \leftarrow \llbracket  \sigma(\mathbf{x}) \geq 0.5 \rrbracket$$
+
+where $\llbracket p \rrbracket = 1$ iff $p$ is true.  Since you are using SGD, you should randomize the order for every round of training, set the learning rate to a reasonable value, and possibly use a hold-out set to determine convergence.
+
+\begin{enumerate}
+\item
+Create a program that can be run with the command
+
+{\tt ./lr-run}
+
+which should produce a predictions file {\tt predictions.lr} such that the labels should be mapped as stated int Table~\ref{table:mapping}.
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{|l|c|}
+\hline
+Text Label & Numerical Value \\
+\hline
+corporate & 2.0 \\
+personal & 6.0 \\
+\hline
+\end{tabular}
+\caption{Label to Numerical Value Mapping}
+\label{table:mapping}
+\end{table}
+
+Again, the odd labeling will allow us to maintain consistency {\em if} I decide to use this data in future problem sets.  Look at {\tt output/labels26.txt} to see the ``gold" labels in the specified format.  Additionally, in the {\tt output} directory, you can run {\tt evaluate.pl labels26.txt predictions.lr} can be used to generate a confusion matrix (and {\tt predictions.lr} is the file generated above). 
+
+\item
+Describe anything you did differently in regards to processing the files or anything else we may find interesting.  I am particularly interested in how you set the learning rate and number of rounds. Note that you are allowed to use the files {\em as-is} and receive full credit.  However, I am always impressed by interesting results.
+
+\item
+Write down the confusion matrix for the logistic regression output.
+
+\item
+Interpret these results.
+
+
+\end{enumerate}
+
+\end{enumerate}
+
+\begin{itemize}
+\item
+Use your CCIS github repository to submit all relevant files.  You are free to use the programming language of your choice, but please attempt to conform to the instructions above.  To be safe, try submitting something {\bf before} the assignment deadline.
+
+\item
+The code you submit must be your own. If you find/use information about specific algorithms from the Web, etc., be sure to cite the source(s) clearly in your source code.  You are not allowed to submit existing na\"{i}ve Bayes or logistic regression implementations or code downloaded from the internet (obviously).
+\end{itemize}
+
+\end{document}

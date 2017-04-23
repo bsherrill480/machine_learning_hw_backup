@@ -1,0 +1,43 @@
+n/algorithm/estimated_margin/entry
+note: estimated_margin = 1 for winnow => estimated_margin > 0
+------------------
+120/perceptron/0/M: 50
+120/perceptron/0/result: D2 accuracy: 0.9988, trial: learning_rate: 1, estimated_margin: 0
+120/perceptron/1/M: 0
+120/perceptron/1/result: D2 accuracy: 1.0, trial: learning_rate: 0.005, estimated_margin: 1
+120/winnnow/0/M: 1276
+120/winnnow/0/result: D2 accuracy: 0.971, trial: learning_rate: 1.1, estimated_margin: 0
+120/winnnow/1/M: 1276
+120/winnnow/1/result: D2 accuracy: 0.971, trial: learning_rate: 1.1, estimated_margin: 0.001
+160/perceptron/0/M: 76
+160/perceptron/0/result: D2 accuracy: 0.9986, trial: learning_rate: 1, estimated_margin: 0
+160/perceptron/1/M: 0
+160/perceptron/1/result: D2 accuracy: 1.0, trial: learning_rate: 0.005, estimated_margin: 1
+160/winnnow/0/M: 1277
+160/winnnow/0/result: D2 accuracy: 0.9728, trial: learning_rate: 1.1, estimated_margin: 0
+160/winnnow/1/M: 1277
+160/winnnow/1/result: D2 accuracy: 0.9728, trial: learning_rate: 1.1, estimated_margin: 0.04
+200/perceptron/0/M: 343
+200/perceptron/0/result: D2 accuracy: 0.9934, trial: learning_rate: 1, estimated_margin: 0
+200/perceptron/1/M: 10
+200/perceptron/1/result: D2 accuracy: 1.0, trial: learning_rate: 0.005, estimated_margin: 1
+200/winnnow/0/M: 1410
+200/winnnow/0/result: D2 accuracy: 0.9748, trial: learning_rate: 1.1, estimated_margin: 0
+200/winnnow/1/M: 1410
+200/winnnow/1/result: D2 accuracy: 0.9748, trial: learning_rate: 1.1, estimated_margin: 0.3
+40/perceptron/0/M: 7
+40/perceptron/0/result: D2 accuracy: 1.0, trial: learning_rate: 1, estimated_margin: 0
+40/perceptron/1/M: 0
+40/perceptron/1/result: D2 accuracy: 1.0, trial: learning_rate: 0.03, estimated_margin: 1
+40/winnnow/0/M: 1228
+40/winnnow/0/result: D2 accuracy: 0.976, trial: learning_rate: 1.1, estimated_margin: 0
+40/winnnow/1/M: 1091
+40/winnnow/1/result: D2 accuracy: 0.9796, trial: learning_rate: 1.1, estimated_margin: 0.3
+80/perceptron/0/M: 26
+80/perceptron/0/result: D2 accuracy: 0.9998, trial: learning_rate: 1, estimated_margin: 0
+80/perceptron/1/M: 0
+80/perceptron/1/result: D2 accuracy: 1.0, trial: learning_rate: 0.005, estimated_margin: 1
+80/winnnow/0/M: 1258
+80/winnnow/0/result: D2 accuracy: 0.972, trial: learning_rate: 1.1, estimated_margin: 0
+80/winnnow/1/M: 1338
+80/winnnow/1/result: D2 accuracy: 0.9734, trial: learning_rate: 1.1, estimated_margin: 0.3

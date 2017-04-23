@@ -1,0 +1,11 @@
+m/algorithm/estimated_margin/entry
+note: estimated_margin = 1 for winnow => estimated_margin > 0
+------------------
+1000/perceptron/0/M: 991
+1000/perceptron/0/result: D2 accuracy: 0.826, trial: learning_rate: 1, estimated_margin: 0
+1000/perceptron/1/M: 848
+1000/perceptron/1/result: D2 accuracy: 0.837, trial: learning_rate: 0.001, estimated_margin: 1
+1000/winnnow/0/M: 4723
+1000/winnnow/0/result: D2 accuracy: 0.5168, trial: learning_rate: 1.005, estimated_margin: 0
+1000/winnnow/1/M: 4701
+1000/winnnow/1/result: D2 accuracy: 0.518, trial: learning_rate: 1.005, estimated_margin: 2.0

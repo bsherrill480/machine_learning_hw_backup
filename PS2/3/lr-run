@@ -1,0 +1,127 @@
+#!/usr/bin/env python2.7
+
+import os
+import random
+import math
+from decimal import Decimal
+random.seed(1)
+
+CORPORATE = '2.0'
+PERSONAL = '6.0'
+
+WORD_EXISTS = 1
+WORD_DNE = 0
+
+def get_file_path_in_libsvm(file_name):
+    return '../materials/data/libsvm/{}'.format(file_name)
+
+
+def get_lines_from_file(file_name):
+    relative_file_location = get_file_path_in_libsvm(file_name)
+    absolute_file_location = os.path.join(os.path.dirname(__file__), relative_file_location)
+    lines = tuple(open(absolute_file_location, 'r'))
+    return lines
+
+dimensionality = len(get_lines_from_file('features.lexicon'))
+
+def file_label_to_1_or_0(label):
+    if label == CORPORATE:
+        return 1
+    elif label == PERSONAL:
+        return 0
+    else:
+        raise Exception('invalid file label')
+
+def algo_prediction_to_file_label(prediction):
+    if prediction == 1:
+        return CORPORATE
+    elif prediction == 0:
+        return PERSONAL
+    else:
+        raise Exception('invalid prediction')
+
+def word_string_to_feature_index(word):
+    return int(Decimal(word)) - 1
+
+class LabeledFeature:
+    def __init__(self, label, features):
+        self.label = label
+        self.features = features
+
+def make_feature(fileRow):
+    feature = [WORD_DNE for i in range(dimensionality)]
+    words_pairs = fileRow.split(' ')
+    label = file_label_to_1_or_0(words_pairs[0])
+    words_pairs.pop(0)  # remove the label
+    for word_pair in words_pairs:
+        word, exists = word_pair.split(':')
+        feature[word_string_to_feature_index(word)] = WORD_EXISTS
+    return LabeledFeature(label, feature)
+
+# FROM STACK OVERFLOW
+def dot(K, L):
+    if len(K) != len(L):
+        raise Exception("len(K) != leN(L)")
+    return sum(i[0] * i[1] for i in zip(K, L))
+
+def sigmoid(weights, feature, w_0):
+    weights_dot_feature = dot(weights, feature)
+    denominator = 1 + math.exp(-weights_dot_feature - w_0)
+    return 1/denominator
+
+
+def train(t, labeled_features_list):
+    weights = [0 for i in range(dimensionality)]
+    w_0 = 0
+    for i in range(t):
+        random.shuffle(labeled_features_list)
+        for labeled_features in labeled_features_list:
+            features = labeled_features.features
+            label = labeled_features.label
+            sigmoid_value = sigmoid(weights, features, w_0)
+            delta = label - sigmoid_value
+            for d in range(dimensionality):
+                weights[d] += delta * features[d]
+            w_0 += delta
+    return weights, w_0
+
+def predict(labeled_features_test_list, weights, w_0):
+    predictions = []
+    actual_value = []
+    for labeled_features in labeled_features_test_list:
+        label = labeled_features.label
+        features = labeled_features.features
+        classifier_value = sigmoid(weights, features, w_0)
+        prediction = 1 if classifier_value > .5 else 0
+        predictions.append(prediction)
+        actual_value.append(label)
+    return predictions, actual_value
+
+def get_accuracy(predictions, actual_labels):
+    num_correct = sum(
+        [1 if zipped[0] == zipped[1] else 0 for zipped in zip(predictions, actual_labels)]
+    )
+    return float(num_correct) / len(predictions)
+
+def save_predictions(lines):
+    relative_file_location = '../materials/output/predictions.lr'
+    absolute_file_location = os.path.join(os.path.dirname(__file__), relative_file_location)
+    prediction_file = open(absolute_file_location, 'w')
+    for line in lines:
+        prediction_file.write('{}\n'.format(line))
+
+def run(t):
+    training_data_raw = get_lines_from_file('train.libsvm')
+    labeled_features_train = [make_feature(fileRow) for fileRow in training_data_raw]
+    weights, w_0 = train(t, labeled_features_train)
+    # print('weights {} {}'.format(w_0, weights[0:10]))
+    testing_data_raw = get_lines_from_file('test.libsvm')
+    labeled_features_test = [make_feature(fileRow) for fileRow in testing_data_raw]
+    predictions, actual = predict(labeled_features_test, weights, w_0)
+    print(get_accuracy(predictions, actual))
+    # file_predictions = predictions with 2.0 and 6.0 instead of 1 and 0
+    file_predictions = [algo_prediction_to_file_label(prediction) for prediction in predictions]
+    save_predictions(file_predictions)
+
+
+run(40)

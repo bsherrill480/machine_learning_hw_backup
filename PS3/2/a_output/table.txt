@@ -1,0 +1,19 @@
+n/algorithm/estimated_margin/entry
+note: estimated_margin = 1 for winnow => estimated_margin > 0
+------------------
+1000/perceptron/0/M: 4715
+1000/perceptron/0/result: D2 accuracy: 0.9002, trial: learning_rate: 1, estimated_margin: 0
+1000/perceptron/1/M: 4524
+1000/perceptron/1/result: D2 accuracy: 0.9066, trial: learning_rate: 0.005, estimated_margin: 1
+1000/winnnow/0/M: 15942
+1000/winnnow/0/result: D2 accuracy: 0.6816, trial: learning_rate: 1.1, estimated_margin: 0
+1000/winnnow/1/M: 15508
+1000/winnnow/1/result: D2 accuracy: 0.6894, trial: learning_rate: 1.1, estimated_margin: 2.0
+500/perceptron/0/M: 2836
+500/perceptron/0/result: D2 accuracy: 0.9446, trial: learning_rate: 1, estimated_margin: 0
+500/perceptron/1/M: 2587
+500/perceptron/1/result: D2 accuracy: 0.9502, trial: learning_rate: 0.001, estimated_margin: 1
+500/winnnow/0/M: 18281
+500/winnnow/0/result: D2 accuracy: 0.6394, trial: learning_rate: 1.1, estimated_margin: 0
+500/winnnow/1/M: 17237
+500/winnnow/1/result: D2 accuracy: 0.6618, trial: learning_rate: 1.1, estimated_margin: 0.3
