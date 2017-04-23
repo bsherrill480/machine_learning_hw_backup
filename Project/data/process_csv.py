@@ -33,8 +33,7 @@ def raw_labels_to_int_labels(raw_labels, raw_label_to_int_map):
     return [raw_label_to_int_map[l] for l in raw_labels]
 
 
-def run(relative_file_path, output_dir, label_col):
-
+def run(relative_file_path, output_dir, label_col, raw_label_to_int_map=None):
     file_name = relative_file_path.split('/')[-1].split('.')[0]
 
     # read file
@@ -58,7 +57,8 @@ def run(relative_file_path, output_dir, label_col):
 
     # get labels
     raw_labels_for_data = standardize_raw_labels([l[label_index] for l in lines])
-    raw_label_to_int_map = get_raw_label_to_int_map(raw_labels_for_data)
+    if not raw_label_to_int_map:
+        raw_label_to_int_map = get_raw_label_to_int_map(raw_labels_for_data)
     labels_for_data = raw_labels_to_int_labels(raw_labels_for_data, raw_label_to_int_map)
 
     # get data about file
@@ -86,8 +86,13 @@ def run(relative_file_path, output_dir, label_col):
     with open(output_labels_key_location, 'w+') as f:
         json.dump(raw_label_to_int_map, f, sort_keys=True, indent=4, separators=(',', ': '))
 
+    return raw_label_to_int_map
+
 if __name__ == '__main__':
-    relative_file_path = './boston_housing_raw/BostonHousingNominal.csv'
-    output_dir = 'boston_housing_processed'
-    run(relative_file_path, output_dir, 'MEDV')
+    relative_file_path = './boston_housing_raw/BostonHousingNominalTrain.csv'
+    output_dir = 'boston_housing_processed_train'
+    raw_labels_to_int_map = run(relative_file_path, output_dir, 'MEDV')
+    relative_file_path = './boston_housing_raw/BostonHousingNominalTest.csv'
+    output_dir = 'boston_housing_processed_test'
+    run(relative_file_path, output_dir, 'MEDV', raw_label_to_int_map=raw_labels_to_int_map)
 
